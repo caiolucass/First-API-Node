@@ -1,19 +1,25 @@
-import {Router} from "express";
-import {v4 as uuidV4} from "uuid";
+import {response, Router} from "express";
+import { CategoriesRepository } from "../repositories/CategoriesRepository";
 
 const categoriesRoutes = Router();
-const categories = [];
+const categoriesRepository = new CategoriesRepository();
 
-categoriesRoutes.post("/", (request, response) =>{
+/*
+* Cria uma categoria
+*/
+categoriesRoutes.post("/", (request, response) => {
   const {name, description} = request.body;
-  const category = {
-    id: uuidV4(),
-    name,
-    description,
-  };
-  categories.push(category);
+  
+  categoriesRepository.create({name, description});
+  return response.status(201).send();
+});
 
-  return response.status(201).json({sucess:"Categoria " + `${name}` + " criada com sucesso!"}).send();
+/*
+* Retorna uma categoria de categorias
+*/
+categoriesRoutes.get("/", (request, response) => {
+    const listAll = categoriesRepository.list();
+    return response.json(listAll);
 });
 
 export {categoriesRoutes};
